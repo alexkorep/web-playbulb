@@ -44,10 +44,10 @@ export class CandleDevice {
 
   setColor(red, green, blue, saturation) {
     var arr = [
-        saturation % 255,
-        red % 255,
-        green % 255,
-        blue % 255]
+        Math.round(saturation % 256),
+        Math.round(red % 256),
+        Math.round(green % 256),
+        Math.round(blue % 256)]
     var bytes = new Uint8Array(arr)
     return this.characteristic.writeValue(bytes)
   }
