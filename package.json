@@ -1,0 +1,33 @@
+{
+  "name": "web-playbulb",
+  "version": "1.0.0",
+  "description": "Web Bluetooth API library for Mipow Playbulb Bluetooth Candle",
+  "main": "src/js/index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --progress --colors --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexkorep/web-playbulb.git"
+  },
+  "keywords": [
+    "Mipow",
+    "Playbulb",
+    "Web",
+    "Bluetooth"
+  ],
+  "author": "Alexey Korepanov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexkorep/web-playbulb/issues"
+  },
+  "homepage": "https://github.com/alexkorep/web-playbulb#readme",
+  "devDependencies": {
+    "webpack": "^2.4.1"
+  }
+}
