@@ -20,7 +20,9 @@ export function ConnectDevice () {
       }
 
       return deviceObject.connect().then(() => {
-        return deviceObject
+          return new Promise(resolve => resolve(deviceObject))
       })
     })
 }
+
+window.ConnectDevice = ConnectDevice

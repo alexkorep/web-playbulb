@@ -1,5 +1,6 @@
-var SERVICE_UUID = ''
-var CHARACTERISTIC_UUID = ''
+var SERVICE_UUID = '0000ff02-0000-1000-8000-00805f9b34fb'
+//var CHARACTERISTIC_UUID = '0000fffb-0000-1000-8000-00805f9b34fb'
+var CHARACTERISTIC_UUID = '0000fffc-0000-1000-8000-00805f9b34fb'
 
 export class CandleDevice {
   constructor(device) {
@@ -8,7 +9,7 @@ export class CandleDevice {
   }
 
   static nameMatch(deviceName) {
-    return /^CANDLE?$/.test(deviceName)
+    return /^PLAYBULB CANDLE?$/.test(deviceName)
   }
 
   static serviceUUID() {
@@ -21,7 +22,7 @@ export class CandleDevice {
     console.log('Connecting to Bluetooth Device...');
     return bluetoothDevice.gatt.connect()
       .then(server => {
-        return server.getPrimaryService(KIIROO_SERVICE);
+        return server.getPrimaryService(SERVICE_UUID);
       })
       .then(service => {
         console.log('Getting Characteristics...');
@@ -29,7 +30,6 @@ export class CandleDevice {
       })
       .then(characteristics => {
         characteristics.forEach(characteristic => {
-          //console.log('Characteristic: ' + characteristic.uuid);
           switch (characteristic.uuid) {
             case CHARACTERISTIC_UUID:
               this.characteristic = characteristic
@@ -42,15 +42,13 @@ export class CandleDevice {
       })
   }
 
-  write(value) {
-    var arr = [value] // TODO fix it
-    console.log(arr)
+  setColor(red, green, blue, saturation) {
+    var arr = [
+        saturation % 255,
+        red % 255,
+        green % 255,
+        blue % 255]
     var bytes = new Uint8Array(arr)
-    this.characteristic.writeValue(bytes)
-      .then(() => {
-        console.log('Written')
-      }).catch(error => {
-        console.log('Error', error)
-      })
+    return this.characteristic.writeValue(bytes)
   }
 }
