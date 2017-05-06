@@ -2,6 +2,10 @@ var SERVICE_UUID = '0000ff02-0000-1000-8000-00805f9b34fb'
 //var CHARACTERISTIC_UUID = '0000fffb-0000-1000-8000-00805f9b34fb'
 var CHARACTERISTIC_UUID = '0000fffc-0000-1000-8000-00805f9b34fb'
 
+function byteLimit(value) {
+  return Math.round(Math.min(Math.max(parseInt(value), 0), 255))
+}
+
 export class CandleDevice {
   constructor(device) {
     this.device = device
@@ -44,10 +48,11 @@ export class CandleDevice {
 
   setColor(red, green, blue, saturation) {
     var arr = [
-        Math.round(saturation % 256),
-        Math.round(red % 256),
-        Math.round(green % 256),
-        Math.round(blue % 256)]
+      byteLimit(saturation),
+      byteLimit(red),
+      byteLimit(green),
+      byteLimit(blue)
+    ]
     var bytes = new Uint8Array(arr)
     return this.characteristic.writeValue(bytes)
   }
