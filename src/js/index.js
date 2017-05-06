@@ -1,11 +1,10 @@
 import { CandleDevice } from './devices/candle'
 
 export function ConnectDevice () {
+  var serviceUUIDs = CandleDevice.serviceUUIDs()
   var options = {
     acceptAllDevices: true,
-    optionalServices: [
-      CandleDevice.serviceUUID(),
-    ],
+    optionalServices: serviceUUIDs,
   }
   var bluetoothDevice = null
 

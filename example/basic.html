@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>web-playbulb basic example</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
 
@@ -25,6 +25,7 @@
           <button id="btn-connect">Connect</button>
           <div id="status"></div>
           <input type='text' id="color-picker"></input>
+          <button id='battery-level'>Get battery level</button>
         </div>
       </div>
     </div>
@@ -51,6 +52,11 @@
         color: "#fff",
         change: function(color) {
           console.log(color)
+          if (!light) {
+            // Bluetooth device is not connected
+            return
+          }
+
           light.setColor(color._r, color._g, color._b, 0xFF)
             .then(() => {
               $('#status').text('Written')
@@ -60,6 +66,15 @@
             })
         }
       });
+
+      $("#battery-level").click(() => {
+        light.getBatteryLevel()
+          .then(
+            level => $('#status').text('Battery level: ' + level + '%')
+          ).catch(
+            error => $('#status').text('Error reading battery level: ' + error)
+          )
+      })
     </script>
   </body>
 </html>

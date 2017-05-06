@@ -83,14 +83,15 @@ class CandleDevice {
   constructor(device) {
     this.device = device
     this.characteristic = null
+    this.server = null
   }
 
   static nameMatch(deviceName) {
     return /^PLAYBULB CANDLE?$/.test(deviceName)
   }
 
-  static serviceUUID() {
-    return SERVICE_UUID
+  static serviceUUIDs() {
+    return [SERVICE_UUID, 'battery_service']
   }
 
 
@@ -99,6 +100,7 @@ class CandleDevice {
     console.log('Connecting to Bluetooth Device...');
     return bluetoothDevice.gatt.connect()
       .then(server => {
+        this.server = server
         return server.getPrimaryService(SERVICE_UUID);
       })
       .then(service => {
@@ -129,6 +131,27 @@ class CandleDevice {
     var bytes = new Uint8Array(arr)
     return this.characteristic.writeValue(bytes)
   }
+
+  getBatteryLevel() {
+    if (!this.server) {
+      return Promise.reject('Bluetooth device is not connected')
+    }
+
+    console.log('Getting Battery Service...');
+    return this.server.getPrimaryService('battery_service')
+      .then(service => {
+        console.log('Getting Battery Level Characteristic...')
+        return service.getCharacteristic('battery_level')
+      })
+      .then(characteristic => {
+        console.log('Reading Battery Level...')
+        return characteristic.readValue();
+      }).then(value => {
+        let batteryLevel = value.getUint8(0);
+        console.log('Battery Level:', batteryLevel)
+        return batteryLevel
+      })
+  }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CandleDevice;
 
@@ -144,11 +167,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 function ConnectDevice () {
+  var serviceUUIDs = __WEBPACK_IMPORTED_MODULE_0__devices_candle__["a" /* CandleDevice */].serviceUUIDs()
   var options = {
     acceptAllDevices: true,
-    optionalServices: [
-      __WEBPACK_IMPORTED_MODULE_0__devices_candle__["a" /* CandleDevice */].serviceUUID(),
-    ],
+    optionalServices: serviceUUIDs,
   }
   var bluetoothDevice = null
 

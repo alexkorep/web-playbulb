@@ -10,14 +10,15 @@ export class CandleDevice {
   constructor(device) {
     this.device = device
     this.characteristic = null
+    this.server = null
   }
 
   static nameMatch(deviceName) {
     return /^PLAYBULB CANDLE?$/.test(deviceName)
   }
 
-  static serviceUUID() {
-    return SERVICE_UUID
+  static serviceUUIDs() {
+    return [SERVICE_UUID, 'battery_service']
   }
 
 
@@ -26,6 +27,7 @@ export class CandleDevice {
     console.log('Connecting to Bluetooth Device...');
     return bluetoothDevice.gatt.connect()
       .then(server => {
+        this.server = server
         return server.getPrimaryService(SERVICE_UUID);
       })
       .then(service => {
@@ -55,5 +57,26 @@ export class CandleDevice {
     ]
     var bytes = new Uint8Array(arr)
     return this.characteristic.writeValue(bytes)
+  }
+
+  getBatteryLevel() {
+    if (!this.server) {
+      return Promise.reject('Bluetooth device is not connected')
+    }
+
+    console.log('Getting Battery Service...');
+    return this.server.getPrimaryService('battery_service')
+      .then(service => {
+        console.log('Getting Battery Level Characteristic...')
+        return service.getCharacteristic('battery_level')
+      })
+      .then(characteristic => {
+        console.log('Reading Battery Level...')
+        return characteristic.readValue();
+      }).then(value => {
+        let batteryLevel = value.getUint8(0);
+        console.log('Battery Level:', batteryLevel)
+        return batteryLevel
+      })
   }
 }
